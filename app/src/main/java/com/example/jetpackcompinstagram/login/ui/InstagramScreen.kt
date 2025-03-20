@@ -1,4 +1,4 @@
-package com.example.jetpackcompinstagram.ui
+package com.example.jetpackcompinstagram.login.ui
 
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
@@ -32,9 +32,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,23 +45,21 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcompinstagram.R
 import com.example.jetpackcompinstagram.ui.theme.AuxiliaryText
 import com.example.jetpackcompinstagram.ui.theme.PrimaryButton
 import com.example.jetpackcompinstagram.ui.theme.TextFieldBg
 
-@Preview(showBackground = true)
 @Composable
-fun MyInstagramScreen(modifier: Modifier = Modifier) {
+fun MyInstagramScreen(loginViewModel: LoginViewModel, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
         Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center))
+        Body(loginViewModel, Modifier.align(Alignment.Center))
         Footer(Modifier.align(Alignment.BottomCenter)) {  }
     }
 }
@@ -89,9 +87,10 @@ fun Footer(modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-fun Body(modifier: Modifier) {
-    var user by rememberSaveable { mutableStateOf("") }
-    var passwd by rememberSaveable { mutableStateOf("") }
+fun Body(loginViewModel: LoginViewModel, modifier: Modifier) {
+    val email: String by loginViewModel.email.observeAsState(initial = "")
+    val passwd: String by loginViewModel.password.observeAsState(initial = "")
+    val isLoginEnabled: Boolean by loginViewModel.isLoginEnabled.observeAsState(initial = false)
 
     Column(modifier = modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
@@ -101,13 +100,13 @@ fun Body(modifier: Modifier) {
             contentScale = ContentScale.FillWidth
         )
         Spacer(Modifier.height(16.dp))
-        EmailTextField(user) { user = it }
+        EmailTextField(email) { loginViewModel.onLoginChanged(email = it, passwd = passwd) }
         Spacer(Modifier.height(16.dp))
-        PasswordTextField(passwd) { passwd = it }
+        PasswordTextField(passwd) { loginViewModel.onLoginChanged(email = email, passwd = it) }
         Spacer(Modifier.height(16.dp))
         AuxiliaryClickableText("Forgot password?", Modifier.align(Alignment.End)) { }
         Spacer(Modifier.height(16.dp))
-        LoginButton("Log In") { }
+        LoginButton("Log In", isLoginEnabled) { }
         Spacer(Modifier.height(24.dp))
         SeparatorWai()
         Spacer(Modifier.height(24.dp))
@@ -157,12 +156,13 @@ fun SeparatorWai() {
 }
 
 @Composable
-fun LoginButton(text: String, onClick: () -> Unit) {
+fun LoginButton(text: String, isEnabled: Boolean, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = PrimaryButton),
-        shape = MaterialTheme.shapes.small
+        shape = MaterialTheme.shapes.small,
+        enabled = isEnabled
     ) {
         Text(
             text,
