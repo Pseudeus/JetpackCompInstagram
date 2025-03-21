@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,9 +59,22 @@ fun MyInstagramScreen(loginViewModel: LoginViewModel, modifier: Modifier = Modif
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Header(Modifier.align(Alignment.TopEnd))
-        Body(loginViewModel, Modifier.align(Alignment.Center))
-        Footer(Modifier.align(Alignment.BottomCenter)) {  }
+        val isLoading: Boolean by loginViewModel.isLoading.observeAsState(initial = false)
+
+        if (isLoading) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Header(Modifier.align(Alignment.TopEnd))
+            Body(loginViewModel, Modifier.align(Alignment.Center))
+            Footer(Modifier.align(Alignment.BottomCenter)) { }
+        }
     }
 }
 
@@ -106,7 +120,7 @@ fun Body(loginViewModel: LoginViewModel, modifier: Modifier) {
         Spacer(Modifier.height(16.dp))
         AuxiliaryClickableText("Forgot password?", Modifier.align(Alignment.End)) { }
         Spacer(Modifier.height(16.dp))
-        LoginButton("Log In", isLoginEnabled) { }
+        LoginButton("Log In", isLoginEnabled) { loginViewModel.onLoginSelected() }
         Spacer(Modifier.height(24.dp))
         SeparatorWai()
         Spacer(Modifier.height(24.dp))
