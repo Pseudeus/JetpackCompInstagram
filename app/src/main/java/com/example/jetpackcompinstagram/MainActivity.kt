@@ -29,7 +29,10 @@ class MainActivity : ComponentActivity() {
             JetpackCompInstagramTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 //                    MyInstagramScreen(viewModel, Modifier.padding(innerPadding))
-                    ColorAnimationSimple()
+//                    ColorAnimationSimple(Modifier.padding(innerPadding))
+//                    SizeAnimation(Modifier.padding(innerPadding))
+//                    VisibilityAnimation(Modifier.padding(innerPadding))
+                    CrossfadeExampleAnimation(Modifier.padding(innerPadding))
                 }
             }
         }
