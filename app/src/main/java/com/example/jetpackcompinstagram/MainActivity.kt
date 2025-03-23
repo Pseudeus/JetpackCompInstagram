@@ -15,10 +15,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetpackcompinstagram.login.ui.LoginViewModel
 import com.example.jetpackcompinstagram.login.ui.MyInstagramScreen
 import com.example.jetpackcompinstagram.ui.theme.JetpackCompInstagramTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +28,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             JetpackCompInstagramTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MyInstagramScreen(viewModel, Modifier.padding(innerPadding))
+//                    MyInstagramScreen(viewModel, Modifier.padding(innerPadding))
+                    ColorAnimationSimple()
                 }
             }
         }
